@@ -1,0 +1,70 @@
+{
+  "title": "Chatbot Performance Dashboard",
+  "uid": "chatbot-metrics",
+  "tags": ["podman", "ai", "monitoring"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "title": "API Response Times",
+      "type": "graph",
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(model_api_request_duration_seconds_bucket[1m])) by (le)",
+          "legendFormat": "95th percentile"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(model_api_request_duration_seconds_bucket[1m])) by (le)",
+          "legendFormat": "Median"
+        }
+      ]
+    },
+    {
+      "title": "Request Rate",
+      "type": "graph",
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+      "targets": [
+        {
+          "expr": "rate(model_api_requests_total[1m])",
+          "legendFormat": "Requests/s"
+        }
+      ]
+    },
+    {
+      "title": "Error Rate",
+      "type": "stat",
+      "gridPos": {"x": 0, "y": 8, "w": 6, "h": 4},
+      "targets": [
+        {
+          "expr": "rate(model_api_errors_total[1m]) / rate(model_api_requests_total[1m])",
+          "format": "percentunit"
+        }
+      ]
+    },
+    {
+      "title": "Container Metrics",
+      "type": "table",
+      "gridPos": {"x": 6, "y": 8, "w": 18, "h": 8},
+      "targets": [
+        {
+          "expr": "podman_container_cpu_usage_percent",
+          "instant": true
+        },
+        {
+          "expr": "podman_container_memory_usage_bytes",
+          "instant": true
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "instance",
+        "query": "label_values(model_api_requests_total, instance)",
+        "label": "Instance"
+      }
+    ]
+  },
+  "refresh": "30s"
+}

@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true  # Ensures sudo/root privileges
+  tasks:
+    - name: Install Podman
+      ansible.builtin.dnf:
+        name: podman
+        state: present
+
+    - name: Clone AI Lab Recipes
+      ansible.builtin.git:
+        repo: "https://github.com/containers/ai-lab-recipes.git"
+        dest: "/home/{{ ansible_user }}/ai-lab-recipes"
+        clone: yes
+        update: no
+
+    - name: Start Model Service
+      ansible.builtin.shell: |
+        podman run -d --name llama-server -p 8000:8000 \
+          -v ~/models:/models \
+          -e MODEL=/models/granite-7b-lab-Q5_K_M.gguf \
+          localhost/llama-model-service
+      args:
+        executable: /bin/bash
