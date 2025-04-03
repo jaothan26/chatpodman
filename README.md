@@ -91,5 +91,4 @@ Monitoring → Grafana ← Kubernetes ← Terraform
 - Education platform for learning AI/MLOps
 - Secure alternative to commercial chat services
 
-Would you like me to focus on any specific aspect (AI models, scaling, etc.)?
-Copy
+
